@@ -1,0 +1,43 @@
+================================================================================
+HALLAZGOS Y CONCLUSIONES - EJERCICIO 1 (SAUCEDEMO E2E CON SERENITY BDD)
+================================================================================
+
+1. HALLAZGOS TÉCNICOS IDENTIFICADOS
+   - Discrepancia entre texto en DOM y presentación visual (CSS) en la confirmación:
+     En la pantalla final de compra (checkout-complete.html), el texto contenido en
+     el nodo DOM '.complete-header' es literalmente "Thank you for your order!"
+     (en formato oración y con signo de exclamación al final), mientras que en
+     pantalla se renderiza en mayúsculas sostenidas mediante la regla CSS
+     'text-transform: uppercase'. Para validar fielmente el criterio de aceptación
+     ("THANK YOU FOR YOUR ORDER") sin fragilidad ante estilos o signos de puntuación,
+     se implementó la aserción 'containsIgnoringCase'.
+
+   - Alta testabilidad y estabilidad de selectores en SauceDemo:
+     Todos los componentes interactivos del flujo (login, catálogo de productos,
+     carrito y formulario de checkout) disponen de atributos 'id' únicos y
+     consistentes (ej. 'user-name', 'add-to-cart-sauce-labs-backpack', 'checkout',
+     'finish'), lo que permitió construir un mapeo limpio y resiliente sin depender
+     de XPaths posicionales.
+
+   - Interferencia de alertas nativas del navegador con credenciales públicas:
+     Al emplear credenciales de prueba ampliamente conocidas (standard_user /
+     secret_sauce), Google Chrome puede desplegar ventanas emergentes de advertencia
+     sobre contraseñas vulneradas. La incorporación de '--incognito',
+     '--disable-notifications' y '--disable-popup-blocking' en 'serenity.conf'
+     eliminó bloqueos visuales y aseguró una ejecución desatendida determinística.
+
+   - Integración de Serenity BDD 4 con JUnit 5 Platform Suite:
+     En Serenity BDD 4.x, el plugin de reporte paralelo de Cucumber reside en el
+     paquete 'io.cucumber.core.plugin.SerenityReporterParallel' y requiere la
+     declaración explícita de 'cucumber-junit-platform-engine' junto con los plugins
+     'maven-failsafe-plugin' y 'serenity-maven-plugin' (fase post-integration-test)
+     para consolidar el reporte HTML navegable.
+
+2. CONCLUSIONES
+   - La arquitectura basada en el patrón Screenplay (separando UI, Tasks, Questions
+     y Step Definitions) aporta alta legibilidad, bajo acoplamiento y facilidad de
+     mantenimiento ante futuros cambios en la interfaz de usuario.
+   - La captura automática de evidencias visuales por cada interacción configurada
+     mediante 'serenity.take.screenshots = FOR_EACH_ACTION' proporciona trazabilidad
+     completa de auditoría funcional desde la autenticación hasta la confirmación
+     de la orden.
